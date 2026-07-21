@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "deepseek/deepseek-chat",
+  "instructions": ["~/dotfiles/ai-infra-decisions.md"],
+  "agent": {
+    "orchestrator": {
+      "mode": "primary",
+      "model": "deepseek/deepseek-reasoner",
+      "prompt": "You are the head. Plan and break work into small, verifiable steps and delegate implementation to the `coder` subagent. If `coder` fails a step 2-3 times, implement it yourself. Keep delegated tasks simple and unambiguous."
+    },
+    "coder": {
+      "mode": "subagent",
+      "model": "deepseek/deepseek-chat",
+      "description": "Implements well-defined, simple coding tasks handed down by the orchestrator."
+    }
+  }
+}
