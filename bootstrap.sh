@@ -12,11 +12,13 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BW_SERVER="https://vault.yeoun.org"
 BW_ITEM="Hermes .env"                 # single source of truth (custom fields = keys)
-KEYS=(DEEPSEEK_API_KEY OPENROUTER_API_KEY)   # keys to pull if present
+KEYS=(OLLAMA_API_KEY DEEPSEEK_API_KEY OPENROUTER_API_KEY)   # keys to pull if present
 KEYS_ENV="$HOME/.config/opencode/keys.env"
 SESSION_FILE="$HOME/.config/opencode/bw_session"
 
 say(){ printf '\033[1;36m>>\033[0m %s\n' "$*"; }
+bw_status(){ bw status ${1:+--session "$1"} 2>/dev/null \
+  | python3 -c 'import sys,json;print(json.load(sys.stdin).get("status",""))' 2>/dev/null || true; }
 
 # 1) opencode ------------------------------------------------------------
 if ! command -v opencode >/dev/null 2>&1; then
@@ -32,18 +34,41 @@ if ! command -v bw >/dev/null 2>&1; then
     echo "!! npm not found — install Node/npm then re-run, or install bw manually"; exit 1; }
 fi
 
-# 3) point bw at self-hosted server & ensure logged-in -------------------
+# 3) point bw at the self-hosted server ---------------------------------
 CUR_SERVER="$(bw config server 2>/dev/null || true)"
-[ "$CUR_SERVER" = "$BW_SERVER" ] || { say "pointing bw at $BW_SERVER"; bw logout >/dev/null 2>&1 || true; bw config server "$BW_SERVER" >/dev/null; }
-if [ "$(bw status 2>/dev/null | python3 -c 'import sys,json;print(json.load(sys.stdin)["status"])' 2>/dev/null)" = "unauthenticated" ]; then
-  say "logging into Vaultwarden (email + master password)..."
-  bw login
+[ "$CUR_SERVER" = "$BW_SERVER" ] || {
+  say "pointing bw at $BW_SERVER"
+  bw logout >/dev/null 2>&1 || true
+  bw config server "$BW_SERVER" >/dev/null
+}
+
+# 4) get a session — master password is typed AT MOST ONCE ---------------
+# Order: reuse a still-valid saved session -> login --raw -> unlock --raw.
+# `bw login --raw` already returns an UNLOCKED session, so calling `bw unlock`
+# afterwards is what made the old script ask for the password twice.
+mkdir -p "$(dirname "$SESSION_FILE")"
+SESSION=""
+
+if [ -s "$SESSION_FILE" ]; then
+  CANDIDATE="$(cat "$SESSION_FILE")"
+  if [ "$(bw_status "$CANDIDATE")" = "unlocked" ]; then
+    SESSION="$CANDIDATE"
+    say "reusing saved vault session (no password needed)"
+  fi
 fi
 
-# 4) unlock (master password ONCE) & save session -----------------------
-say "unlocking vault (master password)..."
-mkdir -p "$(dirname "$SESSION_FILE")"
-SESSION="$(bw unlock --raw)"
+if [ -z "$SESSION" ]; then
+  case "$(bw_status)" in
+    unauthenticated)
+      say "logging into Vaultwarden (email + master password — ONCE)..."
+      SESSION="$(bw login --raw)" ;;
+    *)
+      say "unlocking vault (master password — ONCE)..."
+      SESSION="$(bw unlock --raw)" ;;
+  esac
+fi
+
+[ -n "$SESSION" ] || { echo "!! could not obtain a vault session"; exit 1; }
 printf '%s' "$SESSION" > "$SESSION_FILE"; chmod 600 "$SESSION_FILE"
 export BW_SESSION="$SESSION"
 
