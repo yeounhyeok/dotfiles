@@ -1,9 +1,22 @@
 # AI 인프라 의사결정 기록 (ADR)
-> 작성: 2026-07-21 · 대상: 운혁(yeounhyeok) · 용도: ROLEX 봇 + 연구 코딩 에이전트 백엔드 선택
-> 이 문서는 opencode의 AGENTS.md 컨텍스트로 물리거나, ROLEX가 참조하도록 설계됨.
+> 작성 2026-07-21 · **개정 2026-07-23** · 대상: 운혁(yeounhyeok)
+> 행동 규칙은 `AGENTS.md`. 이 문서는 **왜 이 모델·구조인가**의 기록이다.
+
+> ⚠️ **2026-07-23 개정 — 아래 7/21 결정은 상당수 뒤집혔다.**
+> - ROLEX 백엔드: DeepSeek → **Ollama Cloud Pro `glm-5.2`** (월 $20, 이미 결제 중)
+> - 연구 코딩: "8월에 OpenRouter" → **동일한 Ollama 구독을 opencode가 공유** (추가 결제 없음)
+> - 최종 판단: **월 $20 외 추가 결제 없음.** 학교 Helpy Chat이 Opus 4.7 / GPT-5.5 Pro / Gemini 3.1 Pro를 무료 제공하므로 판단·검증 계층은 그쪽이 담당.
+> - 전체 근거: Obsidian `개발·인프라·홈랩/AI 도구 배치 전략 (2026-07)`
+>
+> **현재 유효한 사실 (2026-07-23 실측)**
+> - `glm-5.2` Intelligence Index **51** (Sonnet 4.6 동점, Opus 4.6 53과 2점차) · GDPval **1524**(에이전트 1위)
+> - Ollama 내 대안: Kimi K2.6 = 44, K2.7-code 환각률 80.3%, **K3 미제공**, MiniMax M3는 질문 70% 기권, DeepSeek V4 Pro 환각률 94%
+> - **`glm-5.2`는 이미지 입력 불가** (API가 거부). `gemma4:31b` / `minimax-m3` / `kimi-k2.7-code`는 가능
+> - GLM-5.2 약점은 AA-Omniscience 지수 **4**(무보조 사실판단) 하나뿐 → 학교 Opus + 인용강제 규칙으로 방어
+>
+> 아래 원문은 당시 판단의 맥락으로 남겨둔다. **모델·비용 수치는 위 개정본이 우선한다.**
 
 ---
-
 ## TL;DR — 최종 아키텍처
 ```
 🤖 ROLEX 봇(hermes) = DeepSeek direct (deepseek-chat=v4-flash) · 캐싱 · ~$2~4/월 · 선불 · 격리
