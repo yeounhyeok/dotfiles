@@ -7,31 +7,8 @@
   ],
   "permission": {
     "*": "allow",
-    "bash": {
-      "*": "allow",
-      "sudo *": "ask",
-      "kill *": "ask",
-      "pkill *": "ask",
-      "killall *": "ask",
-      "systemctl stop *": "ask",
-      "systemctl restart *": "ask",
-      "docker stop *": "ask",
-      "docker rm *": "ask",
-      "rm -r *": "ask",
-      "rm -rf *": "ask",
-      "git push *": "ask",
-      "git reset --hard *": "ask",
-      "git clean *": "ask",
-      "shutdown *": "deny",
-      "reboot *": "deny",
-      "mkfs*": "deny",
-      "dd if=*": "deny"
-    },
-    "external_directory": {
-      "~/dotfiles/**": "allow",
-      "~/.config/opencode/**": "allow",
-      "/tmp/**": "allow"
-    }
+    "bash": "allow",
+    "external_directory": "allow"
   },
   "provider": {
     "ollama": {
