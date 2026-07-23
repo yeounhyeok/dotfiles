@@ -20,8 +20,24 @@ pulls the API keys, wires them into your shell, and links the opencode config. T
     `@ai-sdk/openai-compatible`, key from `{env:OLLAMA_API_KEY}`.
   - **head / orchestrator:** `ollama/glm-5.2` — Intelligence Index 51, GDPval 1524 (top agentic).
   - **worker / coder:** `ollama/kimi-k2.7-code` — code-specialised.
-  - also declared: `minimax-m3` (long context), `nemotron-3-nano:30b` (cheap/fast).
-  - **permission:** `edit` / `bash` / `webfetch` all `allow` — no approval prompts mid-run.
+  - **vision:** `ollama/gemma4:31b` — see below.
+  - also declared: `minimax-m3` (long context, also vision-capable), `nemotron-3-nano:30b` (cheap/fast).
+  - **permission:** `edit` / `webfetch` `allow`; `bash` allows everything **except** destructive
+    commands (`kill`/`pkill`/`rm -r`/`sudo`/`git push`/… → `ask`; `shutdown`/`mkfs`/`dd` → `deny`).
+
+### ⚠️ glm-5.2 is text-only — it cannot see images
+Verified 2026-07-23: `glm-5.2` rejects image input outright
+(`this model does not support image input`). `gemma4:31b`, `minimax-m3` and
+`kimi-k2.7-code` do accept images.
+
+Any task involving a screenshot, GUI capture, plot or diagram must go through the
+`vision` subagent — the orchestrator gets a text description back and works from that.
+The orchestrator prompt states this explicitly, because a text-only head that silently
+fails to read a screenshot will improvise a workaround instead of asking for help.
+
+The orchestrator prompt also forbids killing/restarting a running process before its
+in-memory state is persisted — that combination (blind to the screen + free rein over
+`kill`) is how a GUI session's unsaved work gets destroyed.
 - `ai-infra-decisions.md` — decision record (loaded into opencode via `instructions`).
 - `bootstrap.sh` — the one-liner above.
 - `register-secrets.sh` — run on the Hermes box to push local keys into Vaultwarden's `Hermes .env` item.

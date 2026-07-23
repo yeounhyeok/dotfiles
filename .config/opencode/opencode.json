@@ -4,8 +4,27 @@
   "instructions": ["~/dotfiles/ai-infra-decisions.md"],
   "permission": {
     "edit": "allow",
-    "bash": "allow",
-    "webfetch": "allow"
+    "webfetch": "allow",
+    "bash": {
+      "*": "allow",
+      "sudo *": "ask",
+      "kill *": "ask",
+      "pkill *": "ask",
+      "killall *": "ask",
+      "systemctl stop *": "ask",
+      "systemctl restart *": "ask",
+      "docker stop *": "ask",
+      "docker rm *": "ask",
+      "rm -r *": "ask",
+      "rm -rf *": "ask",
+      "git push *": "ask",
+      "git reset --hard *": "ask",
+      "git clean *": "ask",
+      "shutdown *": "deny",
+      "reboot *": "deny",
+      "mkfs*": "deny",
+      "dd if=*": "deny"
+    }
   },
   "provider": {
     "ollama": {
@@ -39,12 +58,17 @@
     "orchestrator": {
       "mode": "primary",
       "model": "ollama/glm-5.2",
-      "prompt": "You are the head. Plan and break work into small, verifiable steps and delegate implementation to the `coder` subagent. If `coder` fails a step 2-3 times, implement it yourself. Keep delegated tasks simple and unambiguous."
+      "prompt": "You are the head. Plan and break work into small, verifiable steps and delegate implementation to the `coder` subagent. If `coder` fails a step 2-3 times, implement it yourself. Keep delegated tasks simple and unambiguous.\n\nYOU CANNOT SEE IMAGES. Your model is text-only, so screenshots, plots, GUI captures and diagrams are invisible to you — you will get nothing back from reading them. Delegate any task that requires looking at an image to the `vision` subagent and work from its description.\n\nNEVER kill, restart, or stop a running process before checking whether it holds state that exists only in memory. A GUI or server the user is interacting with may hold unsaved work; killing it destroys that work irreversibly. Get the state persisted to disk first, or ask the user. The same applies to any command that removes or overwrites files."
     },
     "coder": {
       "mode": "subagent",
       "model": "ollama/kimi-k2.7-code",
       "description": "Implements well-defined, simple coding tasks handed down by the orchestrator."
+    },
+    "vision": {
+      "mode": "subagent",
+      "model": "ollama/gemma4:31b",
+      "description": "Looks at images. Use this for ANY task needing to read a screenshot, GUI capture, plot, diagram or photo — describe what is in it, locate UI elements and report their pixel coordinates. The orchestrator and coder models are text-only and cannot see images at all."
     }
   }
 }
