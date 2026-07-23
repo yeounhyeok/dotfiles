@@ -67,7 +67,14 @@
           }
         },
         "gemma4:31b": {
-          "name": "Gemma 4 31B (vision, colon in id — may not resolve)",
+          "name": "Gemma 4 31B (vision)",
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          }
+        },
+        "nemotron-3-nano:30b": {
+          "name": "Nemotron 3 Nano (cheap/fast)",
           "limit": {
             "context": 131072,
             "output": 16384
@@ -89,7 +96,7 @@
     },
     "vision": {
       "mode": "subagent",
-      "model": "ollama/minimax-m3",
+      "model": "ollama/gemma4:31b",
       "description": "Looks at images. Use this for ANY task needing to read a screenshot, GUI capture, plot, diagram or photo — describe what is in it, locate UI elements and report their pixel coordinates. The orchestrator and coder models are text-only and cannot see images at all."
     }
   }
