@@ -27,6 +27,11 @@
       "reboot *": "deny",
       "mkfs*": "deny",
       "dd if=*": "deny"
+    },
+    "external_directory": {
+      "~/dotfiles/**": "allow",
+      "~/.config/opencode/**": "allow",
+      "/tmp/**": "allow"
     }
   },
   "provider": {
@@ -97,7 +102,8 @@
     "vision": {
       "mode": "subagent",
       "model": "ollama/gemma4:31b",
-      "description": "Looks at images. Use this for ANY task needing to read a screenshot, GUI capture, plot, diagram or photo — describe what is in it, locate UI elements and report their pixel coordinates. The orchestrator and coder models are text-only and cannot see images at all."
+      "description": "Looks at images. Use this for ANY task needing to read a screenshot, GUI capture, plot, diagram or photo — describe what is in it, locate UI elements and report their pixel coordinates. The orchestrator and coder models are text-only and cannot see images at all.",
+      "prompt": "You CAN see images — you are the vision model (gemma4:31b). The global rules say the agent cannot see images; that statement describes the orchestrator and coder, NOT you. Ignore it for yourself.\n\nLook at the image you are given and answer concretely: what is in it, and where. For UI elements report pixel coordinates. If an image cannot be loaded, say so plainly instead of claiming you are unable to see images."
     }
   }
 }
