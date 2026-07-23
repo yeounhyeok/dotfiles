@@ -6,8 +6,7 @@
     "~/dotfiles/ai-infra-decisions.md"
   ],
   "permission": {
-    "edit": "allow",
-    "webfetch": "allow",
+    "*": "allow",
     "bash": {
       "*": "allow",
       "sudo *": "ask",
@@ -89,11 +88,6 @@
     }
   },
   "agent": {
-    "orchestrator": {
-      "mode": "primary",
-      "model": "ollama/glm-5.2",
-      "prompt": "You are the head. Plan and break work into small, verifiable steps and delegate implementation to the `coder` subagent. If `coder` fails a step 2-3 times, implement it yourself. Keep delegated tasks simple and unambiguous.\n\nYOU CANNOT SEE IMAGES. Your model is text-only, so screenshots, plots, GUI captures and diagrams are invisible to you — you will get nothing back from reading them. Delegate any task that requires looking at an image to the `vision` subagent and work from its description.\n\nNEVER kill, restart, or stop a running process before checking whether it holds state that exists only in memory. A GUI or server the user is interacting with may hold unsaved work; killing it destroys that work irreversibly. Get the state persisted to disk first, or ask the user. The same applies to any command that removes or overwrites files."
-    },
     "coder": {
       "mode": "subagent",
       "model": "ollama/kimi-k2.7-code",
