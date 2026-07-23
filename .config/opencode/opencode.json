@@ -1,7 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "ollama/glm-5.2",
-  "instructions": ["~/dotfiles/AGENTS.md", "~/dotfiles/ai-infra-decisions.md"],
+  "instructions": [
+    "~/dotfiles/AGENTS.md",
+    "~/dotfiles/ai-infra-decisions.md"
+  ],
   "permission": {
     "edit": "allow",
     "webfetch": "allow",
@@ -37,19 +40,38 @@
       "models": {
         "glm-5.2": {
           "name": "GLM 5.2 (head)",
-          "limit": { "context": 131072, "output": 32768 }
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
         },
         "kimi-k2.7-code": {
           "name": "Kimi K2.7 Code (coder)",
-          "limit": { "context": 131072, "output": 32768 }
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
         },
         "minimax-m3": {
           "name": "MiniMax M3 (long context)",
-          "limit": { "context": 200000, "output": 32768 }
+          "limit": {
+            "context": 200000,
+            "output": 32768
+          }
         },
-        "nemotron-3-nano:30b": {
-          "name": "Nemotron 3 Nano (cheap/fast)",
-          "limit": { "context": 131072, "output": 16384 }
+        "minimax-m2.5": {
+          "name": "MiniMax M2.5 (cheap/fast)",
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          }
+        },
+        "gemma4:31b": {
+          "name": "Gemma 4 31B (vision, colon in id — may not resolve)",
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          }
         }
       }
     }
@@ -67,7 +89,7 @@
     },
     "vision": {
       "mode": "subagent",
-      "model": "ollama/gemma4:31b",
+      "model": "ollama/minimax-m3",
       "description": "Looks at images. Use this for ANY task needing to read a screenshot, GUI capture, plot, diagram or photo — describe what is in it, locate UI elements and report their pixel coordinates. The orchestrator and coder models are text-only and cannot see images at all."
     }
   }
