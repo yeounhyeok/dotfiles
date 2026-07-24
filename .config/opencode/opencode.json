@@ -21,6 +21,9 @@
       "models": {
         "glm-5.2": {
           "name": "GLM 5.2 (head)",
+          "options": {
+            "reasoningEffort": "max"
+          },
           "limit": {
             "context": 131072,
             "output": 32768

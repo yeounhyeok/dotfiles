@@ -19,6 +19,9 @@ pulls the API keys, wires them into your shell, and links the opencode config. T
   - **provider:** `ollama` → Ollama Cloud (`https://ollama.com/v1`, OpenAI-compatible) via
     `@ai-sdk/openai-compatible`, key from `{env:OLLAMA_API_KEY}`.
   - **head / orchestrator:** `ollama/glm-5.2` — Intelligence Index 51, GDPval 1524 (top agentic).
+    **Reasoning effort = `max`** (GLM-5.2 supports High/Max thinking levels; verified against
+    Ollama Cloud `/v1` 2026-07-25 via `reasoning_effort: "max"` — response separates `reasoning`
+    from `content`). Configured at `provider.ollama.models.glm-5.2.options.reasoningEffort`.
   - **worker / coder:** `ollama/kimi-k2.7-code` — code-specialised.
   - **vision:** `ollama/gemma4:31b` — see below.
   - also declared: `minimax-m3` (long context, also vision-capable), `nemotron-3-nano:30b` (cheap/fast).
