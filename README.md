@@ -22,6 +22,8 @@ pulls the API keys, wires them into your shell, and links the opencode config. T
     **Reasoning effort = `max`** (GLM-5.2 supports High/Max thinking levels; verified against
     Ollama Cloud `/v1` 2026-07-25 via `reasoning_effort: "max"` — response separates `reasoning`
     from `content`). Configured at `provider.ollama.models.glm-5.2.options.reasoningEffort`.
+    **Effort variants** (cycle with `Ctrl+T` in TUI): `low` / `medium` / `high` / `max`.
+    All four verified live against Ollama Cloud `/v1` 2026-07-25. Default is `max`.
   - **worker / coder:** `ollama/kimi-k2.7-code` — code-specialised.
   - **vision:** `ollama/gemma4:31b` — see below.
   - also declared: `minimax-m3` (long context, also vision-capable), `nemotron-3-nano:30b` (cheap/fast).

@@ -24,6 +24,12 @@
           "options": {
             "reasoningEffort": "max"
           },
+          "variants": {
+            "low":    { "reasoningEffort": "low" },
+            "medium": { "reasoningEffort": "medium" },
+            "high":   { "reasoningEffort": "high" },
+            "max":    { "reasoningEffort": "max" }
+          },
           "limit": {
             "context": 131072,
             "output": 32768
