@@ -42,6 +42,13 @@ in-memory state is persisted — that combination (blind to the screen + free re
 - `bootstrap.sh` — the one-liner above.
 - `register-secrets.sh` — run on the Hermes box to push local keys into Vaultwarden's `Hermes .env` item.
 
+## Agent harness rules (`AGENTS.md`)
+`AGENTS.md` is loaded into opencode via `opencode.json` → `instructions`, so every session
+runs under the same operating rules. Recent additions:
+- **§12 작업 후 문서화 — YOU MUST**: after any code change, verify related docs still match
+  (README, AGENTS.md, hotkey/CLI tables). The limbus-md-helper mac port was shipped with a
+  Windows-only root README and an unindexed `mac/` dir — that gap is the reason this rule exists.
+
 ## Secrets model
 - **Single source of truth:** Vaultwarden `Hermes .env` item, custom fields = `KEY=value`.
 - `bootstrap.sh` pulls `OLLAMA_API_KEY`, `DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY` into
