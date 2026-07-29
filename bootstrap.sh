@@ -95,4 +95,10 @@ EOF
 mkdir -p "$HOME/.config/opencode"
 ln -sf "$DOTFILES/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.json"
 
+# 8) codex + GLM (companion script, reuses the vault session above) --------
+if [ -x "$DOTFILES/bootstrap-codex.sh" ]; then
+  say "wiring Codex + GLM..."
+  "$DOTFILES/bootstrap-codex.sh" || say "(codex bootstrap had issues — run ~/dotfiles/bootstrap-codex.sh manually)"
+fi
+
 say "done ✅  open a new shell (or: source $KEYS_ENV) then run: opencode"
