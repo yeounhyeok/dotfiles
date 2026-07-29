@@ -67,6 +67,47 @@ write_profile minimax   minimax-m3      524288
 write_profile deepseek  deepseek-v4-pro 524288
 write_profile kimi-k3    kimi-k3         262144
 
+# 3b) make GLM the default model (so bare `codex` uses GLM) -----------------
+# Set/replace top-level keys: model, model_provider, model_context_window,
+# model_catalog_json, model_reasoning_effort. Only touches keys before the
+# first [section] so existing tables (projects, plugins, ...) stay intact.
+python3 - "$CONFIG" "$CODEX_DIR" <<'PYCFG'
+import re,sys
+cfg, codex_dir = sys.argv[1], sys.argv[2]
+lines = open(cfg).read().splitlines()
+want = {
+    "model": "glm-5.2",
+    "model_provider": "ollama_cloud",
+    "model_context_window": "204800",
+    "model_catalog_json": f"{codex_dir}/ollama-models.json",
+    "model_reasoning_effort": "high",
+}
+# split head (top-level) from first [section]
+split = len(lines)
+for i,l in enumerate(lines):
+    if l.startswith("["):
+        split = i; break
+head, tail = lines[:split], lines[split:]
+seen = set()
+new_head = []
+for l in head:
+    m = re.match(r'\s*([A-Za-z_]+)\s*=', l)
+    if m and m.group(1) in want:
+        k = m.group(1)
+        if k not in seen:
+            v = want[k]
+            new_head.append(f'{k} = "{v}"' if isinstance(v,str) and k!="model_context_window" else f'{k} = {v}')
+            seen.add(k)
+    else:
+        new_head.append(l)
+for k,v in want.items():
+    if k not in seen:
+        new_head.append(f'{k} = "{v}"' if isinstance(v,str) and k!="model_context_window" else f'{k} = {v}')
+out = new_head + ([""] if tail and new_head and new_head[-1]!="" else []) + tail
+open(cfg,"w").write("\n".join(out)+"\n")
+PYCFG
+say "default model set to glm-5.2 (bare `codex` now uses GLM)"
+
 # 4) merge provider block into config.toml (idempotent) ----------------
 CONFIG="$CODEX_DIR/config.toml"
 touch "$CONFIG"
