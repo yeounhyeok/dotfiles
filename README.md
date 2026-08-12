@@ -29,6 +29,11 @@ pulls the API keys, wires them into your shell, and links the opencode config. T
   - also declared: `minimax-m3` (long context, also vision-capable), `nemotron-3-nano:30b` (cheap/fast).
   - **permission:** `edit` / `webfetch` `allow`; `bash` allows everything **except** destructive
     commands (`kill`/`pkill`/`rm -r`/`sudo`/`git push`/… → `ask`; `shutdown`/`mkfs`/`dd` → `deny`).
+- `.config/opencode/tui.json` — TUI keybinds.
+  - **`variant_cycle: "ctrl+t"`** — pinned explicitly (matches opencode's built-in default).
+    Cycles the active model's variants — for `glm-5.2` that's the reasoning-effort ladder
+    `low → medium → high → max`. Pinning it in the repo guarantees the keybind survives even
+    if a future opencode release changes the default, and lets you add more keybinds here later.
 
 ### ⚠️ glm-5.2 is text-only — it cannot see images
 Verified 2026-07-23: `glm-5.2` rejects image input outright

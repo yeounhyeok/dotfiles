@@ -96,6 +96,7 @@ EOF
 # 7) link opencode config -----------------------------------------------
 mkdir -p "$HOME/.config/opencode"
 ln -sf "$DOTFILES/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.json"
+ln -sf "$DOTFILES/.config/opencode/tui.json"     "$HOME/.config/opencode/tui.json"
 
 # 8) codex + GLM (companion script, reuses the vault session above) --------
 if [ -x "$DOTFILES/bootstrap-codex.sh" ]; then
