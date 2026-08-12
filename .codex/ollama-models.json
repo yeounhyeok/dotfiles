@@ -49,7 +49,11 @@
       ],
       "supports_search_tool": true,
       "use_responses_lite": false,
-      "tool_mode": "default"
+      "tool_mode": "default",
+      "model_messages": {
+        "instructions_template": "You are a coding assistant running via Ollama Cloud."
+      },
+      "comp_hash": ""
     },
     {
       "slug": "glm-5.2",
@@ -100,7 +104,11 @@
       ],
       "supports_search_tool": true,
       "use_responses_lite": false,
-      "tool_mode": "default"
+      "tool_mode": "default",
+      "model_messages": {
+        "instructions_template": "You are a coding assistant running via Ollama Cloud."
+      },
+      "comp_hash": ""
     },
     {
       "slug": "deepseek-v4-pro",
@@ -151,7 +159,11 @@
       ],
       "supports_search_tool": true,
       "use_responses_lite": false,
-      "tool_mode": "default"
+      "tool_mode": "default",
+      "model_messages": {
+        "instructions_template": "You are a coding assistant running via Ollama Cloud."
+      },
+      "comp_hash": ""
     },
     {
       "slug": "minimax-m3",
@@ -202,7 +214,11 @@
       ],
       "supports_search_tool": true,
       "use_responses_lite": false,
-      "tool_mode": "default"
+      "tool_mode": "default",
+      "model_messages": {
+        "instructions_template": "You are a coding assistant running via Ollama Cloud."
+      },
+      "comp_hash": ""
     },
     {
       "slug": "qwen3.5:397b",
@@ -253,7 +269,11 @@
       ],
       "supports_search_tool": false,
       "use_responses_lite": false,
-      "tool_mode": "default"
+      "tool_mode": "default",
+      "model_messages": {
+        "instructions_template": "You are a coding assistant running via Ollama Cloud."
+      },
+      "comp_hash": ""
     },
     {
       "slug": "kimi-k3",
@@ -304,7 +324,11 @@
       ],
       "supports_search_tool": true,
       "use_responses_lite": false,
-      "tool_mode": "default"
+      "tool_mode": "default",
+      "model_messages": {
+        "instructions_template": "You are a coding assistant running via Ollama Cloud."
+      },
+      "comp_hash": ""
     }
   ]
 }

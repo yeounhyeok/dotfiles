@@ -74,6 +74,8 @@ export BW_SESSION="$SESSION"
 
 # 5) pull keys from the "Hermes .env" item custom fields ----------------
 say "pulling API keys from '$BW_ITEM'..."
+# Sync first so newly-added vault fields are visible to this session
+bw sync --session "$SESSION" >/dev/null 2>&1 || true
 umask 077; : > "$KEYS_ENV"
 ITEM_JSON="$(bw get item "$BW_ITEM" --session "$SESSION")"
 for k in "${KEYS[@]}"; do
