@@ -98,10 +98,9 @@ mkdir -p "$HOME/.config/opencode"
 ln -sf "$DOTFILES/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.json"
 ln -sf "$DOTFILES/.config/opencode/tui.json"     "$HOME/.config/opencode/tui.json"
 
-# 8) codex + GLM (companion script, reuses the vault session above) --------
-if [ -x "$DOTFILES/bootstrap-codex.sh" ]; then
-  say "wiring Codex + GLM..."
-  "$DOTFILES/bootstrap-codex.sh" || say "(codex bootstrap had issues — run ~/dotfiles/bootstrap-codex.sh manually)"
-fi
+# Codex is NOT wired here. Run bootstrap-codex.sh separately if you want it:
+#   ~/dotfiles/bootstrap-codex.sh
+# (it reuses the saved Vaultwarden session from step 4, no extra password prompt)
 
 say "done ✅  open a new shell (or: source $KEYS_ENV) then run: opencode"
+say "(for Codex + GLM: ~/dotfiles/bootstrap-codex.sh)"
