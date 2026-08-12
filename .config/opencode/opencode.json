@@ -73,6 +73,18 @@
       }
     }
   },
+  "mcp": {
+    "obsidian-vault": {
+      "type": "remote",
+      "url": "https://obsidian-mcp.yeoun.org/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:OBSIDIAN_MCP_TOKEN}"
+      },
+      "oauth": false,
+      "enabled": true,
+      "timeout": 30000
+    }
+  },
   "agent": {
     "coder": {
       "mode": "subagent",

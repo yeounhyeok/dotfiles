@@ -54,9 +54,21 @@ runs under the same operating rules. Recent additions:
   (README, AGENTS.md, hotkey/CLI tables). The limbus-md-helper mac port was shipped with a
   Windows-only root README and an unindexed `mac/` dir — that gap is the reason this rule exists.
 
+## MCP — Obsidian vault (auto-connected)
+
+`opencode.json` declares a remote MCP server `obsidian-vault` pointing at
+`https://obsidian-mcp.yeoun.org/mcp` with `Authorization: Bearer {env:OBSIDIAN_MCP_TOKEN}`.
+OAuth auto-detection is disabled (`oauth: false`) — the `/mcp` endpoint uses header-only
+auth (no browser login flow).
+
+`bootstrap.sh` pulls `OBSIDIAN_MCP_TOKEN` from the Vaultwarden `Hermes .env` item into
+`keys.env` alongside the other API keys. After `source keys.env`, the token is in the
+environment and opencode connects to the Obsidian vault automatically on startup —
+no manual MCP login step.
+
 ## Secrets model
 - **Single source of truth:** Vaultwarden `Hermes .env` item, custom fields = `KEY=value`.
-- `bootstrap.sh` pulls `OLLAMA_API_KEY`, `DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY` into
+- `bootstrap.sh` pulls `OLLAMA_API_KEY`, `DEEPSEEK_API_KEY`, `OPENROUTER_API_KEY`, `OBSIDIAN_MCP_TOKEN` into
   `~/.config/opencode/keys.env` (chmod 600) and sources it from your shell rc.
 - To add a key everywhere: add the field to the `Hermes .env` item (or extend `register-secrets.sh`),
   then re-run `bootstrap.sh` on each machine.

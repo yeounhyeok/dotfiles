@@ -12,7 +12,7 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BW_SERVER="https://vault.yeoun.org"
 BW_ITEM="Hermes .env"                 # single source of truth (custom fields = keys)
-KEYS=(OLLAMA_API_KEY DEEPSEEK_API_KEY OPENROUTER_API_KEY)   # keys to pull if present
+KEYS=(OLLAMA_API_KEY DEEPSEEK_API_KEY OPENROUTER_API_KEY OBSIDIAN_MCP_TOKEN)   # keys to pull if present
 KEYS_ENV="$HOME/.config/opencode/keys.env"
 SESSION_FILE="$HOME/.config/opencode/bw_session"
 
