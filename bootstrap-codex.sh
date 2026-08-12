@@ -71,6 +71,7 @@ write_profile kimi-k3    kimi-k3         262144
 # Set/replace top-level keys: model, model_provider, model_context_window,
 # model_catalog_json, model_reasoning_effort. Only touches keys before the
 # first [section] so existing tables (projects, plugins, ...) stay intact.
+CONFIG="$CODEX_DIR/config.toml"
 python3 - "$CONFIG" "$CODEX_DIR" <<'PYCFG'
 import re,sys
 cfg, codex_dir = sys.argv[1], sys.argv[2]
@@ -109,7 +110,6 @@ PYCFG
 say "default model set to glm-5.2 (bare `codex` now uses GLM)"
 
 # 4) merge provider block into config.toml (idempotent) ----------------
-CONFIG="$CODEX_DIR/config.toml"
 touch "$CONFIG"
 MARK_BEGIN='# >>> codex ollama_cloud provider >>>'
 MARK_END='# <<< codex ollama_cloud provider <<<'
