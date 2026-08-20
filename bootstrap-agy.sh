@@ -29,6 +29,15 @@ case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
   *) export PATH="$HOME/.local/bin:$PATH" ;;
 esac
+
+# WSL: strip Windows /mnt/c/ paths so Linux-native tools are preferred.
+# Without this, `command -v bw` finds the Windows bw (which calls Windows node,
+# not available in WSL) and fails with "exec: node: not found".
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  PATH="$(printf '%s' "$PATH" | tr ':' '\n' | grep -v '^/mnt/c/' | paste -sd:)"
+  export PATH
+fi
+
 BW_ITEM="Hermes .env"
 
 say(){ printf '\033[1;36m>>\033[0m %s\n' "$*"; }
