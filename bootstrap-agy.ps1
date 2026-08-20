@@ -28,6 +28,12 @@ $BwItem = "Hermes .env"
 function Say($msg) { Write-Host ">> $msg" -ForegroundColor Cyan }
 function Fail($msg) { Write-Host "!! $msg" -ForegroundColor Red; exit 1 }
 
+# Write UTF-8 without BOM (PowerShell 5.x Set-Content -Encoding UTF8 adds BOM)
+function Write-Utf8NoBom($Path, $Content) {
+    $Utf8NoBom = New-Object System.Text.UTF8Encoding $false
+    [System.IO.File]::WriteAllText($Path, $Content, $Utf8NoBom)
+}
+
 # 1) agy ----------------------------------------------------------------
 $AgyBin = Join-Path $env:USERPROFILE ".local\bin\agy.exe"
 # Also check if agy is in PATH (installed elsewhere)
@@ -172,14 +178,14 @@ if (Test-Path $AgySettings) {
         $cfg.trustedWorkspaces += $HomePath
     }
 
-    $cfg | ConvertTo-Json -Depth 10 | Set-Content $AgySettings -Encoding UTF8
+    $cfg | ConvertTo-Json -Depth 10 | ForEach-Object { Write-Utf8NoBom $AgySettings $_ }
 } else {
     Say "creating settings.json with dark theme + trustedWorkspaces"
     $cfg = @{
         colorScheme = "dark"
         trustedWorkspaces = @($HomePath)
     }
-    $cfg | ConvertTo-Json -Depth 10 | Set-Content $AgySettings -Encoding UTF8
+    $cfg | ConvertTo-Json -Depth 10 | ForEach-Object { Write-Utf8NoBom $AgySettings $_ }
 }
 
 Say "  + settings.json configured (dark theme, ~\trusted)"
@@ -239,9 +245,9 @@ if (HaveToken) {
         if (-not (Test-Path $KeysDir)) { New-Item -ItemType Directory -Path $KeysDir -Force | Out-Null }
         $Line = "export OBSIDIAN_MCP_TOKEN=$Token"
         if (-not (Test-Path $KeysEnv)) {
-            Set-Content -Path $KeysEnv -Value $Line
+            Write-Utf8NoBom $KeysEnv $Line
         } elseif (-not ((Get-Content $KeysEnv -Raw) -match "OBSIDIAN_MCP_TOKEN")) {
-            Add-Content -Path $KeysEnv -Value $Line
+            Add-Content -Path $KeysEnv -Value $Line -Encoding UTF8
         }
         icacls $KeysEnv /inheritance:r /grant:r "$($env:USERNAME):(R,W)" 2>$null | Out-Null
         $env:OBSIDIAN_MCP_TOKEN = $Token
