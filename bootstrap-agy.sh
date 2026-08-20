@@ -22,9 +22,12 @@ AGY_DIR="$HOME/.gemini/antigravity-cli"
 AGY_SETTINGS="$AGY_DIR/settings.json"
 KEYS_ENV="$HOME/.config/opencode/keys.env"
 BW_SESSION_FILE="$HOME/.config/opencode/bw_session"
+BW_SERVER="https://vault.yeoun.org"
 BW_ITEM="Hermes .env"
 
 say(){ printf '\033[1;36m>>\033[0m %s\n' "$*"; }
+bw_status(){ bw status ${1:+--session "$1"} 2>/dev/null \
+  | python3 -c 'import sys,json;print(json.load(sys.stdin).get("status",""))' 2>/dev/null || true; }
 
 # 1) agy ----------------------------------------------------------------
 if ! command -v agy >/dev/null 2>&1; then
@@ -33,6 +36,54 @@ if ! command -v agy >/dev/null 2>&1; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 say "agy: $(agy --version 2>&1 | head -1 || echo ok)"
+
+# 1b) bitwarden cli (needed for OBSIDIAN_MCP_TOKEN) ---------------------
+if ! command -v bw >/dev/null 2>&1; then
+  say "installing bitwarden-cli..."
+  npm install -g @bitwarden/cli >/dev/null 2>&1 || {
+    echo "!! npm not found — install Node/npm then re-run, or set OBSIDIAN_MCP_TOKEN manually"; }
+  # npm global bin may not be in PATH (esp. WSL)
+  NPM_BIN="$(npm config get prefix 2>/dev/null)/bin"
+  [ -d "$NPM_BIN" ] && case ":$PATH:" in *":$NPM_BIN:"*) ;; *) export PATH="$NPM_BIN:$PATH";; esac
+fi
+
+# 1c) point bw at self-hosted server ----------------------------------
+if command -v bw >/dev/null 2>&1; then
+  CUR_SERVER="$(bw config server 2>/dev/null || true)"
+  [ "$CUR_SERVER" = "$BW_SERVER" ] || {
+    say "pointing bw at $BW_SERVER"
+    bw logout >/dev/null 2>&1 || true
+    bw config server "$BW_SERVER" >/dev/null
+  }
+fi
+
+# 1d) get a vault session (reuse saved, or login/unlock) ----------------
+mkdir -p "$(dirname "$BW_SESSION_FILE")"
+SESSION=""
+
+if [ -s "$BW_SESSION_FILE" ]; then
+  CANDIDATE="$(cat "$BW_SESSION_FILE")"
+  if [ "$(bw_status "$CANDIDATE")" = "unlocked" ]; then
+    SESSION="$CANDIDATE"
+    say "reusing saved vault session (no password needed)"
+  fi
+fi
+
+if [ -z "$SESSION" ] && command -v bw >/dev/null 2>&1; then
+  case "$(bw_status)" in
+    unauthenticated)
+      say "logging into Vaultwarden (email + master password — ONCE)..."
+      SESSION="$(bw login --raw)" ;;
+    *)
+      say "unlocking vault (master password — ONCE)..."
+      SESSION="$(bw unlock --raw)" ;;
+  esac
+fi
+
+[ -n "$SESSION" ] && {
+  printf '%s' "$SESSION" > "$BW_SESSION_FILE"; chmod 600 "$BW_SESSION_FILE"
+  export BW_SESSION="$SESSION"
+}
 
 # 2) settings.json — trustedWorkspaces + dark theme --------------------
 mkdir -p "$AGY_DIR"
