@@ -39,15 +39,17 @@ if ($AgyInPath) {
 } elseif (Test-Path $AgyBin) {
     Say "agy already installed at $AgyBin"
     # Ensure ~/.local/bin is in PATH for this session
-    if ($env:PATH -notlike "*$($env:USERPROFILE\.local\bin)*") {
-        $env:PATH = "$env:USERPROFILE\.local\bin;$env:PATH"
+    $LocalBin = Join-Path $env:USERPROFILE ".local\bin"
+    if ($env:PATH -notlike "*$LocalBin*") {
+        $env:PATH = "$LocalBin;$env:PATH"
     }
 } else {
     Say "installing agy via official install script..."
-    # On Windows, agy installs via the same curl pipe but downloads .exe
-    # Use the official install script which detects Windows
+    # On Windows, download the install script and run via bash (WSL) or use direct binary download
+    $InstallUrl = "https://antigravity.google/cli/install.sh"
     try {
-        & (Invoke-WebRequest -UseBasicParsing "https://antigravity.google/cli/install.sh").Content | bash 2>$null
+        $ScriptContent = (Invoke-WebRequest -UseBasicParsing $InstallUrl).Content
+        $ScriptContent | bash 2>$null
     } catch {
         # Fallback: try npm install if available, or manual download
         Say "install script failed, trying npm..."
