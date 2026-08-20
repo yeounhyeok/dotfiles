@@ -112,3 +112,22 @@ What it wires up:
 > does NOT handle Google login — it only sets up local config + MCP wiring.
 >
 > **Idempotent:** re-running the script skips already-configured settings, aliases, and MCP servers.
+
+### Windows (PowerShell)
+
+For Windows-native agy (not WSL):
+```powershell
+git clone <this-repo-url> $HOME\dotfiles
+pwsh -File $HOME\dotfiles\bootstrap-agy.ps1
+```
+
+What it wires up (same as the bash version, adapted for Windows):
+- **agy** — checks common install paths (`~\.local\bin\agy.exe`, `%LOCALAPPDATA%\antigravity-cli\`); if not found, attempts install via WSL or Git Bash
+- **settings.json** — same dark theme + `trustedWorkspaces` at `%USERPROFILE%\.gemini\antigravity-cli\`
+- **PowerShell function** — `agy` → `agy.exe --dangerously-skip-permissions --mode=accept-edits` (in `$PROFILE`, not `.bashrc`)
+- **obsidian-vault MCP** — same header token auth via `agy mcp add`
+- **OBSIDIAN_MCP_TOKEN** — pulled from Vaultwarden (requires Node.js + npm for `bw` CLI)
+
+> **Note:** agy on Windows may require installing Antigravity IDE (which bundles the CLI).
+> The script handles config + MCP wiring even if the binary isn't found yet — install agy
+> separately, then re-run to connect MCP.
