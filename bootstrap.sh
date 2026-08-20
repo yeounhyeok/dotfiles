@@ -102,5 +102,11 @@ ln -sf "$DOTFILES/.config/opencode/tui.json"     "$HOME/.config/opencode/tui.jso
 #   ~/dotfiles/bootstrap-codex.sh
 # (it reuses the saved Vaultwarden session from step 4, no extra password prompt)
 
-say "done ✅  open a new shell (or: source $KEYS_ENV) then run: opencode"
+# 8) agy (Antigravity CLI, reuses the vault session above) ---------------
+if [ -x "$DOTFILES/bootstrap-agy.sh" ]; then
+  say "wiring Antigravity CLI (agy)..."
+  "$DOTFILES/bootstrap-agy.sh" || say "(agy bootstrap had issues — run ~/dotfiles/bootstrap-agy.sh manually)"
+fi
+
+say "done ✅  open a new shell (or: source $KEYS_ENV) then run: opencode / agy"
 say "(for Codex + GLM: ~/dotfiles/bootstrap-codex.sh)"

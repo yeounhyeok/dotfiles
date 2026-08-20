@@ -1,14 +1,15 @@
-# dotfiles — opencode + secrets bootstrap
+# dotfiles — opencode + codex + agy bootstrap
 
-One command sets up any device with the opencode agent stack (Ollama Cloud) and pulls
-API keys from Vaultwarden. **No secrets live in this repo.**
+One command sets up any device with the full agent CLI stack (opencode + Codex + Antigravity CLI)
+and pulls API keys from Vaultwarden. **No secrets live in this repo.**
 
 ## New machine — the one line
 ```bash
 git clone <this-repo-url> ~/dotfiles && ~/dotfiles/bootstrap.sh
 ```
 It installs opencode + bw, gets a Vaultwarden session (**master password at most once**),
-pulls the API keys, wires them into your shell, and links the opencode config. Then `opencode`.
+pulls the API keys, wires them into your shell, links the opencode config, then chains into
+`bootstrap-codex.sh` (Codex + GLM) and `bootstrap-agy.sh` (Antigravity CLI). Then `opencode` / `agy` / `codex`.
 
 > **Password prompts:** a still-valid saved session at `~/.config/opencode/bw_session` is
 > reused (0 prompts). Otherwise you type the master password exactly **once** —
@@ -89,3 +90,25 @@ tied with Sonnet 4.6, 2 points behind Opus 4.6, and the best model available on 
 
 To switch models, edit `model` / `agent.*.model` in `opencode.json` — any key under
 `provider.ollama.models` is selectable as `ollama/<id>`.
+
+## Antigravity CLI (`bootstrap-agy.sh`)
+
+`bootstrap.sh` chains into `bootstrap-agy.sh` automatically, or run it standalone:
+```bash
+~/dotfiles/bootstrap-agy.sh
+```
+
+What it wires up:
+- **installs agy** via official install script (`curl -fsSL https://antigravity.google/cli/install.sh | bash`)
+- **settings.json** — dark theme + `$HOME` in `trustedWorkspaces` (so agy trusts the workspace)
+- **shell alias** — `agy` → `agy --dangerously-skip-permissions --mode=accept-edits` (auto-approve all
+  tool permissions + file edits, no confirmation prompts). `agy-raw` for unmodified agy.
+- **obsidian-vault MCP** — connected via header token auth (`Authorization: Bearer $OBSIDIAN_MCP_TOKEN`),
+  same remote MCP server as opencode. No browser OAuth flow — uses `agy mcp add --type http --header`.
+- **OBSIDIAN_MCP_TOKEN** — pulled from Vaultwarden (reuses bootstrap.sh's session)
+
+> **Auth:** agy authenticates via Google Sign-In. On first run, `agy` will prompt for login
+> (browser locally, or prints an authorization URL for remote/SSH sessions). The bootstrap script
+> does NOT handle Google login — it only sets up local config + MCP wiring.
+>
+> **Idempotent:** re-running the script skips already-configured settings, aliases, and MCP servers.
