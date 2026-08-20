@@ -23,6 +23,12 @@ AGY_SETTINGS="$AGY_DIR/settings.json"
 KEYS_ENV="$HOME/.config/opencode/keys.env"
 BW_SESSION_FILE="$HOME/.config/opencode/bw_session"
 BW_SERVER="https://vault.yeoun.org"
+
+# Ensure ~/.local/bin is in PATH (agy installs here, but it may not be in PATH yet)
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac
 BW_ITEM="Hermes .env"
 
 say(){ printf '\033[1;36m>>\033[0m %s\n' "$*"; }
@@ -30,11 +36,15 @@ bw_status(){ bw status ${1:+--session "$1"} 2>/dev/null \
   | python3 -c 'import sys,json;print(json.load(sys.stdin).get("status",""))' 2>/dev/null || true; }
 
 # 1) agy ----------------------------------------------------------------
-if ! command -v agy >/dev/null 2>&1; then
+AGY_BIN="$HOME/.local/bin/agy"
+if [ -x "$AGY_BIN" ]; then
+  say "agy already installed at $AGY_BIN"
+else
   say "installing agy via official install script..."
-  curl -fsSL https://antigravity.google/cli/install.sh | bash
-  export PATH="$HOME/.local/bin:$PATH"
+  curl -fsSL https://antigravity.google/cli/install.sh | bash || {
+    echo "!! agy install failed — try manually: curl -fsSL https://antigravity.google/cli/install.sh | bash"; }
 fi
+export PATH="$HOME/.local/bin:$PATH"
 say "agy: $(agy --version 2>&1 | head -1 || echo ok)"
 
 # 1b) bitwarden cli (needed for OBSIDIAN_MCP_TOKEN) ---------------------
